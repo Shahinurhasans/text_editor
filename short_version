@@ -1,0 +1,132 @@
+#include <bits/stdc++.h>
+using namespace std;
+class Node {
+    public:
+    string data;
+    Node* next;
+Node(string data) {     // constructor
+        this -> data = data;
+        this -> next = NULL;
+    }};
+void display(Node*);
+class Editor {
+public:
+    void add_line(Node* &root) {    // add a user given line to the end of text
+        string line;
+        cout << "Enter the line to insert:" << endl;
+        getline(cin, line, '\n');       // input text until enter is pressed
+        if(root == NULL) {      // insert line in an empty list
+            root = new Node(line);
+            return;
+        }
+        Node* root_ref = root;
+        while(root_ref -> next != NULL) {   // traverse the whole list
+            root_ref = root_ref -> next;
+        }
+        Node* temp = new Node(line);
+        root_ref -> next = temp;    // insert the line at end
+    }
+    void delete_line(Node* &root) {     // delete a line whose index is given by the use
+int line_no;
+        cout << "Enter line number to delete: ";
+        cin >> line_no;
+        if(line_no == 1) {      // delete node at the head of list
+            Node* temp = root;
+            root = root -> next;
+            delete temp;        // free up space
+            return;
+        }
+        Node* root_ref = root;
+        for(int i=1; i<line_no-1; i++) {       // traverse till the specified index is reached
+            root_ref = root_ref -> next;
+        }
+        Node* temp = root_ref -> next;
+        root_ref -> next = temp -> next;
+        delete temp;        // free up space
+    }
+    void open_file(Node* &root) {   // read a file and return the head of linked list
+
+        ifstream file;      // open file in read mode
+        string line;
+        file.open("sample.txt");
+        file.seekg(0, ios::beg);       // set the pointer to the start of file
+        if(!file) {
+            cout << "File couldn't open successfully." << endl;
+            return;
+        }
+        else {
+            cout << "File opened successfully." << endl;
+        }
+        while(getline(file, line)) {    // execute until file is read completely
+            if(root == NULL) {
+                root = new Node(line);      // head node
+                continue;
+            }
+            Node* root_ref = root;
+            while(root_ref -> next != NULL) {
+                root_ref = root_ref -> next;    // traverse till the end of linked list
+            }
+            Node* temp = new Node(line);
+            root_ref -> next = temp;
+        }
+        file.close();
+    }
+    void save_file(Node* &root) {   // save the modified file
+        ofstream file;
+        file.open("sample.txt");    // open in output mode
+        Node* root_ref = root;
+        while(root_ref != NULL)
+         {
+            string line = root_ref -> data;
+            file << line << endl;       // write data in the file
+            root_ref = root_ref -> next;
+        }
+        cout << "File saved successfully." << endl;
+        file.close();
+    }
+    void display(Node* root) {      // display the content of file
+        cout << "Current text:" << endl;
+        int i=0;
+        while(root != NULL) {
+            cout << ++i << "> ";    // display line number
+            cout << root -> data << endl;
+            root = root -> next;
+        }
+        cout << endl;
+    }
+    void begin(Node* &root) {     // contoller function
+        open_file(root);
+        int select;
+        while(1) {
+            cout << "Enter your Selection:" << endl;
+            cout << "1. Insert line" << endl;
+            cout << "5. Delete line" << endl;
+            cout << "7. Display text file" << endl;
+            cout << "8. Save File" << endl;
+            cout << "-1. Exit" << endl;
+            cin >> select;
+            cin.ignore();
+            switch(select)
+            {
+                case 1:
+                    add_line(root);
+                    break;
+                case 5:
+                    delete_line(root);
+                    break;
+                case 7:
+                    display(root);
+                    break;
+                case 8:
+                    save_file(root);
+                    break;
+                case -1:
+                    cout << "Editor exited...";
+                    return;}}}};
+int main()
+ {
+    Node* root = NULL;
+    Editor a;
+    a.begin(root);
+    return 0;
+}
